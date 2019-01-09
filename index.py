@@ -4,6 +4,7 @@ from gensim.models import KeyedVectors
 
 from modules.buildVocab import buildVocab
 from modules.checkCoverage import checkCoverage
+from modules.cleanText import cleanText
 
 tqdm.pandas()
 
@@ -12,7 +13,8 @@ trainSetPath = './input/train.csv'
 
 trainSet = pandas.read_csv(trainSetPath)
 
-sentences = trainSet['question_text'].progress_apply(lambda x: x.split()).values
+cleanedTrainSet = trainSet['question_text'].progress_apply(lambda x: cleanText(x))
+sentences = cleanedTrainSet.progress_apply(lambda x: x.split()).values
 vocab = buildVocab(sentences)
 embeddingsIndex = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
 oov = checkCoverage(vocab, embeddingsIndex)
