@@ -4,5 +4,5 @@
 ## Dependencies
 To install depencencies run the following command:
 ```
-pip install pandas tqdm gensim
+pip install -r requirements.txt
 ```
