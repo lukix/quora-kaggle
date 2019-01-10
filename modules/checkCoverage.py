@@ -3,22 +3,26 @@ import operator
 
 tqdm.pandas()
 
-def checkCoverage(vocab, embeddingsIndex):
-	a = {}
-	oov = {}
-	k = 0
-	i = 0
-	for word in tqdm(vocab):
+def checkCoverage(vocabulary, embeddings):
+	coveredWords = {}
+	notCoveredWords = {}
+	foundWordsNumber = 0
+	notFoundWordsNumber = 0
+	for word in tqdm(vocabulary):
 		try:
-			a[word] = embeddingsIndex[word]
-			k += vocab[word]
+			coveredWords[word] = embeddings[word]
+			foundWordsNumber += vocabulary[word]
 		except:
-			oov[word] = vocab[word]
-			i += vocab[word]
+			notCoveredWords[word] = vocabulary[word]
+			notFoundWordsNumber += vocabulary[word]
 			pass
 
-	print('Found embeddings for {:.2%} of vocab'.format(len(a) / len(vocab)))
-	print('Found embeddings for  {:.2%} of all text'.format(k / (k + i)))
-	sorted_x = sorted(oov.items(), key=operator.itemgetter(1))[::-1]
+	fractionOfFoundEmbeddingsForVocabulary = len(coveredWords) / len(vocabulary)
+	fractionOfFoundEmbeddingsForAllText = foundWordsNumber / (foundWordsNumber + notFoundWordsNumber)
+	notCoveredWordsSorted = sorted(notCoveredWords.items(), key=operator.itemgetter(1))[::-1]
 
-	return sorted_x
+	return {
+		'notCoveredWords': notCoveredWordsSorted,
+		'fractionOfFoundEmbeddingsForVocabulary': fractionOfFoundEmbeddingsForVocabulary,
+		'fractionOfFoundEmbeddingsForAllText': fractionOfFoundEmbeddingsForAllText
+	}

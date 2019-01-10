@@ -2,7 +2,7 @@ from tqdm import tqdm
 
 tqdm.pandas()
 
-def buildVocab(sentences, verbose =  True):
+def buildVocabulary(sentences, verbose =  True):
 	"""
 	:param sentences: list of list of words
 	:return: dictionary of words and their count
