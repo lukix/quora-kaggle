@@ -2,10 +2,17 @@ import pandas
 from tqdm import tqdm
 from gensim.models import KeyedVectors
 
-from modules.buildVocab import buildVocab
+from modules.buildVocabulary import buildVocabulary
 from modules.checkCoverage import checkCoverage
 from modules.cleanText import cleanText
 from modules.cleanNumbers import cleanNumbers
+from modules.removeUnwantedWords import removeUnwantedWords
+
+def cleanQuestion(question):
+	return cleanNumbers(cleanText(question))
+
+def splitTextIntoWordsArray(text):
+	return text.split()
 
 tqdm.pandas()
 
@@ -13,15 +20,19 @@ googleNewsPath = './input/embeddings/GoogleNews-vectors-negative300/GoogleNews-v
 trainSetPath = './input/train.csv'
 
 trainSet = pandas.read_csv(trainSetPath)
+questionsTexts = trainSet['question_text']
 
-cleanedTrainSet = trainSet['question_text'].progress_apply(lambda x: cleanNumbers(cleanText(x)))
-sentences = cleanedTrainSet.progress_apply(lambda x: x.split()).values
-vocab = buildVocab(sentences)
-embeddingsIndex = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
-oov = checkCoverage(vocab, embeddingsIndex)
+cleanedQuestionsTexts = questionsTexts.progress_apply(cleanQuestion)
+questionsWordsLists = cleanedQuestionsTexts.progress_apply(splitTextIntoWordsArray).values
+questionsWordsListsWithoutUnwantedWords = removeUnwantedWords(questionsWordsLists)
 
-print('Most frequent words in training set:')
-print({k: vocab[k] for k in list(vocab)[:5]})
+vocabulary = buildVocabulary(questionsWordsListsWithoutUnwantedWords)
 
-print('Most frequent words, which were not found in embeddings:')
-print(oov[:10])
+embeddings = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
+coverageCheckResult = checkCoverage(vocabulary, embeddings)
+
+print('Found embeddings for {:.2%} of vocabulary'.format(coverageCheckResult['fractionOfFoundEmbeddingsForVocabulary']))
+print('Found embeddings for {:.2%} of all text'.format(coverageCheckResult['fractionOfFoundEmbeddingsForAllText']))
+
+print('Top 10 most frequent words, which were not found in embeddings:')
+print(coverageCheckResult['notCoveredWords'][:10])
