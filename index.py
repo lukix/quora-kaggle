@@ -6,12 +6,13 @@ from modules.buildVocabulary import buildVocabulary
 from modules.checkCoverage import checkCoverage
 from modules.cleanText import cleanText
 from modules.cleanNumbers import cleanNumbers
+from modules.removeUnwantedWords import removeUnwantedWords
 
 def cleanQuestion(question):
 	return cleanNumbers(cleanText(question))
 
 def splitTextIntoWordsArray(text):
-	return text.split(' ')
+	return text.split()
 
 tqdm.pandas()
 
@@ -23,7 +24,9 @@ questionsTexts = trainSet['question_text']
 
 cleanedQuestionsTexts = questionsTexts.progress_apply(cleanQuestion)
 questionsWordsLists = cleanedQuestionsTexts.progress_apply(splitTextIntoWordsArray).values
-vocabulary = buildVocabulary(questionsWordsLists)
+questionsWordsListsWithoutUnwantedWords = removeUnwantedWords(questionsWordsLists)
+
+vocabulary = buildVocabulary(questionsWordsListsWithoutUnwantedWords)
 
 embeddings = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
 coverageCheckResult = checkCoverage(vocabulary, embeddings)
