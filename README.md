@@ -15,5 +15,5 @@ pipenv install
 3. Execute algorithm:
 
 ```bash
-python index.py
+python main.py
 ```
