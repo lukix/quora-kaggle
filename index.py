@@ -6,4 +6,4 @@ shouldPrintCoverageData = False
 
 questionsVectorData = wordsToVectors(googleNewsPath, trainSetPath, shouldPrintCoverageData)
 
-print(questionsVectorData[0][0])	# Print vector representing the first word of the first question
+print(questionsVectorData[0][0])  # Print vector representing the first word of the first question

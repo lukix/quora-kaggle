@@ -116,3 +116,7 @@ dmypy.json
 
 # Training data, test data and embeddings
 /input
+
+# IDEs
+.idea
+.vscode
