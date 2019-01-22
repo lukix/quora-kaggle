@@ -2,10 +2,18 @@
 
 [Kaggle competition link](https://www.kaggle.com/c/quora-insincere-questions-classification)
 
-## Dependencies
+## Setup
 
-To install dependencies run the following command:
+1. Install dependencies:
 
-```
+```bash
 pipenv install
+```
+
+2. Download competition data [from here](https://www.kaggle.com/c/quora-insincere-questions-classification/data) and extract to `data` directory
+
+3. Execute algorithm:
+
+```bash
+python index.py
 ```

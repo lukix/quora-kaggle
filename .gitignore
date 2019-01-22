@@ -115,8 +115,12 @@ dmypy.json
 .pyre/
 
 # Training data, test data and embeddings
-/input
+data/*
+!.gitkeep
 
 # IDEs
 .idea
 .vscode
+
+# MacOS specific
+.DS_Store
