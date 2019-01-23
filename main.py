@@ -19,16 +19,17 @@ predictionsFileName = 'submission.csv'
 validationSetMaxSize = 300
 trainBatchSize = 128
 predictionBatchSize = 256
+validationTestSize = 0.1
 
 layerUnits = 64
-trainEpochs = 2
-trainStepsPerEpoch = 100
+trainEpochs = 20
+trainStepsPerEpoch = 1000
 
 predictions = []
 
 inputData = pandas.read_csv(trainSetPath)
 testData = pandas.read_csv(testSetPath)
-trainSet, validationSet = train_test_split(inputData, test_size=0.1)
+trainSet, validationSet = train_test_split(inputData, test_size=validationTestSize)
 
 print("Loading embeddings...")
 embeddings = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
@@ -36,9 +37,7 @@ print("Embeddings loaded.")
 
 trainBatchGenerator = createTrainBatchGenerator(trainSet, embeddings, trainBatchSize)
 
-validationVectors = np.array(
-    [wordsToVectors(embeddings, validationSet["question_text"][:validationSetMaxSize])]
-)
+validationVectors = np.array(wordsToVectors(embeddings, validationSet["question_text"][:validationSetMaxSize]))
 validationClassifications = np.array(validationSet["target"][:validationSetMaxSize])
 
 model = Sequential()
