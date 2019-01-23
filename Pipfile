@@ -11,6 +11,9 @@ tqdm = "*"
 gensim = "*"
 numpy = "*"
 scikit-learn = "*"
+tensorflow = "*"
+keras = "*"
+sklearn = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

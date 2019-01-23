@@ -124,3 +124,6 @@ data/*
 
 # MacOS specific
 .DS_Store
+
+# Prediction
+submission.csv
