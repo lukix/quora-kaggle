@@ -10,6 +10,9 @@ pandas = "*"
 tqdm = "*"
 gensim = "*"
 numpy = "*"
+tensorflow = "*"
+keras = "*"
+sklearn = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"
