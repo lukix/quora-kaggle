@@ -55,12 +55,12 @@ def mapQuestionWordsToVectors(questions, embeddings):
 
 
 def wordsToVectors(embeddings, questionsTexts, shouldPrintCoverageData = False):
-    cleanedQuestionsTexts = questionsTexts.progress_apply(cleanQuestion)
-    questionsWordsLists = cleanedQuestionsTexts.progress_apply(splitTextIntoWordsArray).values
+    cleanedQuestionsTexts = questionsTexts.apply(cleanQuestion)
+    questionsWordsLists = cleanedQuestionsTexts.apply(splitTextIntoWordsArray).values
     questionsWordsListsWithoutUnwantedWords = removeUnwantedWords(questionsWordsLists)
 
     preparedData = questionsWordsListsWithoutUnwantedWords  # list of questions. Question is a list of words (strings)
-    vocabulary = buildVocabulary(preparedData)
+    vocabulary = buildVocabulary(preparedData, False)
 
     if shouldPrintCoverageData:
         printCoverageData(vocabulary, embeddings)
