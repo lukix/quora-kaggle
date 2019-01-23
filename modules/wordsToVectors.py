@@ -1,15 +1,9 @@
-import pandas
-from tqdm import tqdm
-from gensim.models import KeyedVectors
-
 from modules.buildVocabulary import buildVocabulary
 from modules.checkCoverage import checkCoverage
 from modules.cleanText import cleanText
 from modules.cleanNumbers import cleanNumbers
 from modules.removeUnwantedWords import removeUnwantedWords
-
-tqdm.pandas()
-
+from modules.truncateQuestionsData import truncateQuestionsData
 
 def cleanQuestion(question):
     return cleanNumbers(cleanText(question))
@@ -60,23 +54,18 @@ def mapQuestionWordsToVectors(questions, embeddings):
     ))
 
 
-def wordsToVectors(googleNewsPath, trainSetPath, shouldPrintCoverageData):
-    trainSet = pandas.read_csv(trainSetPath)
-    questionsTexts = trainSet['question_text']
-
-    cleanedQuestionsTexts = questionsTexts.progress_apply(cleanQuestion)
-    questionsWordsLists = cleanedQuestionsTexts.progress_apply(splitTextIntoWordsArray).values
+def wordsToVectors(embeddings, questionsTexts, shouldPrintCoverageData = False):
+    cleanedQuestionsTexts = questionsTexts.apply(cleanQuestion)
+    questionsWordsLists = cleanedQuestionsTexts.apply(splitTextIntoWordsArray).values
     questionsWordsListsWithoutUnwantedWords = removeUnwantedWords(questionsWordsLists)
 
     preparedData = questionsWordsListsWithoutUnwantedWords  # list of questions. Question is a list of words (strings)
-
-    vocabulary = buildVocabulary(preparedData)
-
-    embeddings = KeyedVectors.load_word2vec_format(googleNewsPath, binary=True)
+    vocabulary = buildVocabulary(preparedData, False)
 
     if shouldPrintCoverageData:
         printCoverageData(vocabulary, embeddings)
 
     questionsAsVectors = mapQuestionWordsToVectors(preparedData, embeddings)
+    truncatedQuestionsAsVectors = truncateQuestionsData(questionsAsVectors)
 
-    return questionsAsVectors
+    return truncatedQuestionsAsVectors
